@@ -1,4 +1,4 @@
-from flask import Flask , request
+from flask import Flask , request , redirect
 from youtube import Youtube
 
 app = Flask(__name__)
@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 @app.get('/youtube_auth_access_url')
 def get_youtube_access_request_url():
-    return {'uri':Youtube().get_authorization_url()}, 200
+    return redirect(Youtube().get_authorization_url())
 
 
 @app.get('/youtube_auth_access_token')
