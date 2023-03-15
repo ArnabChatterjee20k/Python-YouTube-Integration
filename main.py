@@ -15,6 +15,10 @@ yt.refresh_token = "1//0gyzyssrwsi3TCgYIARAAGBASNwF-L9IrKG2BlnC7uoNjUPcwMEC8Z6ht
 # using it to get details
 videos = yt.get_videos()
 # # print(videos.id.videoId)
-pprint(videos)
+# pprint(videos)
 # for vid in videos:
 #     pprint(vid.id.videoId)
+
+channel = yt.channel_data()
+pprint(channel)
+
