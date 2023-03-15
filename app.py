@@ -1,6 +1,6 @@
-from flask import Flask , request , redirect
+from flask import Flask , request , redirect , g
 from youtube import Youtube
-
+from refresh_token_required import refresh_token_required
 app = Flask(__name__)
 
 
@@ -17,17 +17,12 @@ def get_youtube_access_token():
     return {"refresh_token":refresh_token},200
 
 @app.get('/get_youtube_videos')
+@refresh_token_required
 def get_youtube_videos():
-    data = request.headers
-
-    refresh_token = data.get("refresh_token")
-    if not refresh_token:
-        return {"status":"refresh_token not present in the header","success":False},400
-    
 
     try:
         youtube_client = Youtube()
-        youtube_client.refresh_token = refresh_token
+        youtube_client.refresh_token = g.refresh_token
 
         videos = youtube_client.get_videos()
         
@@ -36,4 +31,19 @@ def get_youtube_videos():
     except:
         return {"videos":"Internal Server Error"},500
 
-app.run(debug=True)
+
+@app.get("/get_channel_info")
+@refresh_token_required
+def get_channel_info():
+    try:
+        youtube_client = Youtube()
+        youtube_client.refresh_token = g.refresh_token
+
+        channel = youtube_client.channel_data()
+        
+        return {"channel":channel,"success":True},200
+
+    except:
+        return {"videos":"Internal Server Error"},500
+
+app.run(debug=True) 
