@@ -58,7 +58,7 @@ class Youtube:
         return urls
     
     @staticmethod
-    def get_url(id):
+    def get_video_url(id):
         """for building the youtube url with video id"""
         url_string = f"https://www.youtube.com/watch?v={id}"
         return url_string
@@ -66,14 +66,13 @@ class Youtube:
     @staticmethod
     def video_factory(video_object):
         # thumbnails -> high , maxres , medium , standard
-        video_id = video_object.id.videoId
-        video_info = video_object.snippet
+        video_id = Youtube.__get_id(video_object).videoId
         return {
-            "thumbnail":video_info.thumbnails.medium.url,
-            "url" : Youtube.get_url(video_id),
+            "thumbnail":Youtube.__get_thumbnails(video_object),
+            "url" : Youtube.get_video_url(video_id),
             "videoId":video_id,
-            "title":video_info.title,
-            "description":video_info.description
+            "title":Youtube.__get_title(video_object),
+            "description":Youtube.__get_description(video_object)
         }
     
     # Channel
@@ -85,13 +84,12 @@ class Youtube:
     @staticmethod
     def channel_factory(channel_object):
         # thumbnails -> high , maxres , medium , standard
-        id = channel_object.id
-        channel_info = channel_object.snippet
+        id = Youtube.__get_id(resource=channel_object)
         return {
             "id":id,
             "url":Youtube.get_channel_url(id),
-            "channel_name" : channel_info.title,
-            "thumbnail":channel_info.thumbnails.medium.url
+            "channel_name" : Youtube.__get_title(channel_object),
+            "thumbnail":Youtube.__get_thumbnails(channel_object)
         }
     
     @staticmethod 
@@ -105,3 +103,46 @@ class Youtube:
         env_not_present =  not client_id or not client_secret
         if env_not_present:
             raise Exception("Please set client_id and client_secret in the environment")
+
+    # Utility methods
+    @staticmethod
+    def __get_info(resource):
+        """
+        @params resource -> channel,video,etc
+        """
+        attribute_name = "snippet"
+        return getattr(resource,attribute_name,None)
+    
+    @staticmethod
+    def __get_id(resource):
+        """
+        @params resource -> channel,video,etc
+        """
+        attribute_name = "id"
+        return getattr(resource,attribute_name)
+    
+    @staticmethod
+    def __get_title(resource):
+        resource_info = Youtube.__get_info(resource)
+        return getattr(resource_info,"title",None)
+    
+    @staticmethod
+    def __get_description(resource):
+        resource_info = Youtube.__get_info(resource)
+        return getattr(resource_info,"description",None)
+    
+    @staticmethod
+    def __get_thumbnails(resource,thumbnail_size="medium"):
+        # thumbnails -> high , maxres , medium , standard
+        # resource.thumbnails.medium.url
+        resource_info = Youtube.__get_info(resource)
+        thumbnail = getattr(resource_info,"thumbnails",None)
+
+        if thumbnail == None:
+            return None
+
+        medium_thumnail = getattr(thumbnail,thumbnail_size,None)      
+        if medium_thumnail==None:
+            return None
+        
+        return medium_thumnail.url
