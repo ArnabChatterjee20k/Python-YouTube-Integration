@@ -47,7 +47,7 @@ class Youtube:
         self.client.generate_access_token(code=code)
         return self.client.refresh_token
         
-
+    # Videos
     def get_videos(self):
         """for getting all videos of the user"""
         videos = self.client.search.list(type="video",for_mine=True).items
@@ -75,7 +75,30 @@ class Youtube:
             "title":video_info.title,
             "description":video_info.description
         }
-        
+    
+    # Channel
+    def channel_data(self):
+        """For getting the channel data of the connected user"""
+        channel = self.client.channels.list(mine=True).items[0]
+        return self.channel_factory(channel)
+
+    @staticmethod
+    def channel_factory(channel_object):
+        # thumbnails -> high , maxres , medium , standard
+        id = channel_object.id
+        channel_info = channel_object.snippet
+        return {
+            "id":id,
+            "url":Youtube.get_channel_url(id),
+            "channel_name" : channel_info.title,
+            "thumbnail":channel_info.thumbnails.medium.url
+        }
+    
+    @staticmethod 
+    def get_channel_url(channel_id):
+        return f"https://www.youtube.com/channel/{channel_id}"
+
+
     @staticmethod
     def check_client_env():
         """For checking the environement variables for client_id and client_secret"""
