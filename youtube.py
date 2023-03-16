@@ -6,6 +6,7 @@ from pprint import pprint
 
 client_id = os.environ.get("client_id")
 client_secret = os.environ.get("client_secret")
+video_per_query = os.environ.get("video_per_query") # for pagination purpose
 
 class Youtube:
     """A abstract class for using the pyyoutube wrapper api"""
@@ -100,9 +101,9 @@ class Youtube:
     @staticmethod
     def check_client_env():
         """For checking the environement variables for client_id and client_secret"""
-        env_not_present =  not client_id or not client_secret
+        env_not_present =  not client_id or not client_secret or not video_per_query
         if env_not_present:
-            raise Exception("Please set client_id and client_secret in the environment")
+            raise Exception("Please set client_id and client_secret and video_per_query in the environment")
 
     # Utility methods
     @staticmethod
