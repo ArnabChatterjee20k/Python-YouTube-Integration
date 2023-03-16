@@ -49,14 +49,15 @@ class Youtube:
         return self.client.refresh_token
         
     # Videos
-    def get_videos(self,page_token=None):
+    def get_videos(self,page_token=None,q=None):
         """
         for getting all videos of the user
         @params page_token for getting the page
+        @params q for searching any video with any queries like name to get the matching results
         @returns dict(next_page_taken,videos)
         """
         # nextPageToken is None if all videos are retrieved
-        videos_details = self.client.search.list(type="video",for_mine=True,max_results=video_per_query,page_token=page_token)
+        videos_details = self.client.search.list(type="video",for_mine=True,max_results=video_per_query,page_token=page_token,q=q)
         videos = videos_details.items
         
         # pprint(videos[0].to_dict())

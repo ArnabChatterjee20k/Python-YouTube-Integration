@@ -18,7 +18,7 @@ token = videos.get("next_page_taken")
 # # print(videos.id.videoId)
 pprint(videos)
 
-pprint(yt.get_videos(page_token=token))
+pprint(yt.get_videos(page_token=token,q="2023"))
 # for vid in videos:
 #     pprint(vid.id.videoId)
 
