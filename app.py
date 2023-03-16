@@ -19,14 +19,14 @@ def get_youtube_access_token():
 @app.get('/get_youtube_videos')
 @refresh_token_required
 def get_youtube_videos():
-
+    page_token = request.args.get("page_token")
     try:
         youtube_client = Youtube()
         youtube_client.refresh_token = g.refresh_token
 
-        videos = youtube_client.get_videos()
+        videos = youtube_client.get_videos(page_token=page_token)
         
-        return {"videos":videos,"success":True},200
+        return {"data":videos,"success":True},200
 
     except:
         return {"videos":"Internal Server Error"},500

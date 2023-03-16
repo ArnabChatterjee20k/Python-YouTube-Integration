@@ -49,14 +49,24 @@ class Youtube:
         return self.client.refresh_token
         
     # Videos
-    def get_videos(self):
-        """for getting all videos of the user"""
-        videos = self.client.search.list(type="video",for_mine=True).items
+    def get_videos(self,page_token=None):
+        """
+        for getting all videos of the user
+        @params page_token for getting the page
+        @returns dict(next_page_taken,videos)
+        """
+        # nextPageToken is None if all videos are retrieved
+        videos_details = self.client.search.list(type="video",for_mine=True,max_results=video_per_query,page_token=page_token)
+        videos = videos_details.items
+        
         # pprint(videos[0].to_dict())
         # urls = [self.get_url(vid.id.videoId) for vid in videos]
         urls = [self.video_factory(vid) for vid in videos]
 
-        return urls
+        return {
+            "next_page_taken":videos_details.nextPageToken, 
+            "videos":urls
+        }
     
     @staticmethod
     def get_video_url(id):
