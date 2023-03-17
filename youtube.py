@@ -11,6 +11,8 @@ video_per_query = os.environ.get("video_per_query") # for pagination purpose
 class Youtube:
     """A abstract class for using the pyyoutube wrapper api"""
 
+    video_sort_accepted_values = ["publishedAt","title"]
+
     def __init__(self,refresh_token=None):
         self.check_client_env() # checking the environment for the dependency
         self.__refresh_token = refresh_token
@@ -49,19 +51,27 @@ class Youtube:
         return self.client.refresh_token
         
     # Videos
-    def get_videos(self,page_token=None,q=None):
+    def get_videos(self,page_token=None,q=None,order=None,descending=True):
         """
         for getting all videos of the user
         @params page_token for getting the page
         @params q for searching any video with any queries like name to get the matching results
+        @params order for sorting data.
+            Accepted values -> publishedAt,title
         @returns dict(next_page_taken,videos)
         """
+
+
+        order = order if order in self.video_sort_accepted_values else None
         # nextPageToken is None if all videos are retrieved
         videos_details = self.client.search.list(type="video",for_mine=True,max_results=video_per_query,page_token=page_token,q=q)
-        videos = videos_details.items
         
-        # pprint(videos[0].to_dict())
-        # urls = [self.get_url(vid.id.videoId) for vid in videos]
+        if order:
+            videos = sorted(videos_details.items,key=lambda x: getattr(x.snippet,order), reverse=descending)
+        
+        else:
+            videos = videos_details.items
+
         urls = [self.video_factory(vid) for vid in videos]
 
         return {

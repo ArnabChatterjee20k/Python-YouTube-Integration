@@ -13,12 +13,12 @@ yt = Youtube()
 yt.refresh_token = "1//0gyzyssrwsi3TCgYIARAAGBASNwF-L9IrKG2BlnC7uoNjUPcwMEC8Z6ht5lWqHT_6puXAFr47IHNVp3I1Ug6BzLbWIjM0o2_vG9k"
 
 # using it to get details
-videos = yt.get_videos()
-token = videos.get("next_page_taken")
+# videos = yt.get_videos()
+# token = videos.get("next_page_taken")
 # # print(videos.id.videoId)
-pprint(videos)
+# pprint(videos)
 
-pprint(yt.get_videos(page_token=token,q="2023"))
+pprint(yt.get_videos(order="title"))
 # for vid in videos:
 #     pprint(vid.id.videoId)
 

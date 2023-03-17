@@ -22,11 +22,15 @@ def get_youtube_videos():
     # we cant use page token and video name together as we are fetching the initial results
     page_token = request.args.get("page_token")
     video_name = request.args.get("title")
+    sort = request.args.get("sort")
+    sort_type = request.args.get("sort_type")
+
+    sort_type = True if sort_type=="descending" else False
+    print(sort_type)
     try:
         youtube_client = Youtube()
         youtube_client.refresh_token = g.refresh_token
-
-        videos = youtube_client.get_videos(page_token=page_token,q=video_name)
+        videos = youtube_client.get_videos(page_token=page_token,q=video_name,order=sort,descending=sort_type)
         
         return {"data":videos,"success":True},200
 
