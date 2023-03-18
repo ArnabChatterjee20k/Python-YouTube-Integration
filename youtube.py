@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 import os
 load_dotenv(".env")
 from pprint import pprint
+from pyyoutube.media import Media
+import pyyoutube.models as mds
 
 client_id = os.environ.get("client_id")
 client_secret = os.environ.get("client_secret")
@@ -17,6 +19,14 @@ class Youtube:
         self.check_client_env() # checking the environment for the dependency
         self.__refresh_token = refresh_token
         self.client = Client(client_id=client_id,client_secret=client_secret,refresh_token=self.__refresh_token)
+        self.client.DEFAULT_SCOPE = [
+            'https://www.googleapis.com/auth/youtube', 
+            'https://www.googleapis.com/auth/youtube.force-ssl', 
+            'https://www.googleapis.com/auth/youtube.readonly', 
+            'https://www.googleapis.com/auth/youtube.upload', 
+            'https://www.googleapis.com/auth/youtubepartner', 
+            ]
+
 
     def __repr__(self):
         data = {
@@ -125,6 +135,37 @@ class Youtube:
         env_not_present =  not client_id or not client_secret or not video_per_query
         if env_not_present:
             raise Exception("Please set client_id and client_secret and video_per_query in the environment")
+    
+    ## upload video
+    def upload_video(self,file_bytes,video_title=None):
+        body = mds.VideoSnippet(title=video_title)
+        media = Media(fd=file_bytes)
+        upload = self.client.videos.insert(
+            body=body,media=media,parts=["snippet"]
+        )
+        status, response = upload.next_chunk()
+
+        video = mds.Video.from_dict(response)
+        return video.id
+    
+    def upload_caption(self,video_id,caption_file):
+        print(video_id)
+        snippet = {
+            'videoId': video_id,
+            'language': 'fr',
+            "name": "English",
+        }   
+        caption = mds.CaptionSnippet(**snippet)
+        body = mds.Caption(snippet=caption)
+        srt_file = Media(fd=caption_file)
+        upload = self.client.captions.insert(body=body,media=srt_file)
+        response = None
+        while response is None:
+            status,response = upload.next_chunk()
+            if status is not None:
+                print(f"Uploading video progress: {status.progress()}...")
+
+        return response
 
     # Utility methods
     @staticmethod

@@ -10,7 +10,14 @@ yt = Youtube()
 # 1//0gyzyssrwsi3TCgYIARAAGBASNwF-L9IrKG2BlnC7uoNjUPcwMEC8Z6ht5lWqHT_6puXAFr47IHNVp3I1Ug6BzLbWIjM0o2_vG9k
 
 # setting the refresh token
-yt.refresh_token = "1//0gyzyssrwsi3TCgYIARAAGBASNwF-L9IrKG2BlnC7uoNjUPcwMEC8Z6ht5lWqHT_6puXAFr47IHNVp3I1Ug6BzLbWIjM0o2_vG9k"
+yt.refresh_token = "1//0glhaJscVcoJ8CgYIARAAGBASNwF-L9IrOJdeu7sWsgl3oTjPOLnb20recIij0U61zqNivwGOyTTyZAns8BIGSJzmPmCP3ss5OTQ"
+yt.client.DEFAULT_SCOPE = [
+  'https://www.googleapis.com/auth/youtube', 
+  'https://www.googleapis.com/auth/youtube.force-ssl', 
+  'https://www.googleapis.com/auth/youtube.readonly', 
+  'https://www.googleapis.com/auth/youtube.upload', 
+  'https://www.googleapis.com/auth/youtubepartner', 
+]
 
 # using it to get details
 # videos = yt.get_videos()
@@ -18,9 +25,14 @@ yt.refresh_token = "1//0gyzyssrwsi3TCgYIARAAGBASNwF-L9IrKG2BlnC7uoNjUPcwMEC8Z6ht
 # # print(videos.id.videoId)
 # pprint(videos)
 
-pprint(yt.get_videos(order="title"))
+# pprint(yt.get_videos(order="title"))
 # for vid in videos:
 #     pprint(vid.id.videoId)
 
-channel = yt.channel_data()
+# channel = yt.channel_data()
 # pprint(chanel)
+
+# captions
+with open("test.srt","rb") as f:
+    res = yt.upload_caption(video_id="XuFyshYCeZk",caption_file=f)
+    print(res)

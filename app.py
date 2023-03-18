@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 @app.get('/youtube_auth_access_url')
 def get_youtube_access_request_url():
-    return redirect(Youtube().get_authorization_url())
+    return Youtube().get_authorization_url()
 
 
 @app.get('/youtube_auth_access_token')
