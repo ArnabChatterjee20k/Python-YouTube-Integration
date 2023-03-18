@@ -143,7 +143,11 @@ class Youtube:
         upload = self.client.videos.insert(
             body=body,media=media,parts=["snippet"]
         )
-        status, response = upload.next_chunk()
+        response = None
+        while response is None:
+            status, response = upload.next_chunk()
+            if status is not None:
+                print(f"Uploading video progress: {status.progress()}...")
 
         video = mds.Video.from_dict(response)
         return video.id
@@ -152,7 +156,7 @@ class Youtube:
         print(video_id)
         snippet = {
             'videoId': video_id,
-            'language': 'fr',
+            'language': 'en',
             "name": "English",
         }   
         caption = mds.CaptionSnippet(**snippet)
