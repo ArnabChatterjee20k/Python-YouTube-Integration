@@ -5,6 +5,7 @@ load_dotenv(".env")
 from pprint import pprint
 from pyyoutube.media import Media
 import pyyoutube.models as mds
+from io import BytesIO
 
 client_id = os.environ.get("client_id")
 client_secret = os.environ.get("client_secret")
@@ -137,7 +138,8 @@ class Youtube:
             raise Exception("Please set client_id and client_secret and video_per_query in the environment")
     
     ## upload video
-    def upload_video(self,file_bytes,video_title=None):
+    def upload_video(self,video_file,video_title=None):
+        file_bytes = BytesIO(video_file)
         body = mds.VideoSnippet(title=video_title)
         media = Media(fd=file_bytes)
         upload = self.client.videos.insert(
@@ -153,7 +155,7 @@ class Youtube:
         return video.id
     
     def upload_caption(self,video_id,caption_file):
-        print(video_id)
+        file_bytes = BytesIO(caption_file)
         snippet = {
             'videoId': video_id,
             'language': 'en',
@@ -161,7 +163,7 @@ class Youtube:
         }   
         caption = mds.CaptionSnippet(**snippet)
         body = mds.Caption(snippet=caption)
-        srt_file = Media(fd=caption_file)
+        srt_file = Media(fd=file_bytes)
         upload = self.client.captions.insert(body=body,media=srt_file)
         response = None
         while response is None:
