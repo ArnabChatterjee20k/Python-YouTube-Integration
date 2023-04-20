@@ -49,7 +49,7 @@ class Youtube:
 
     def get_authorization_url(self):
         """For getting authorisation url"""
-        url,state = self.client.get_authorize_url()
+        url,state = self.client.get_authorize_url(prompt="consent")
         return url
 
     def set_refresh_token(self,code):
